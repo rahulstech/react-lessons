@@ -21,6 +21,7 @@ function TodoInput({ todosState }) {
         setTitle('');
     }
 
+    console.log('rending TodoInput');
     return (
         <div className="row">
             <div className="col-9">

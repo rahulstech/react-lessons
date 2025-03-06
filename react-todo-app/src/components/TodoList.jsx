@@ -6,6 +6,7 @@ function TodoList() {
 
     const { getAllTodos } = useContext(TodoContext);
 
+    console.log('rendering TodoList');
     return (
         <div className="list-group">
             {

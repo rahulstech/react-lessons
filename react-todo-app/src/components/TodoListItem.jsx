@@ -18,6 +18,7 @@ function TodoListItem({ item }) {
         removeTodo(item);
     }
 
+    console.log(`rendering TodoItem id=${item.id}`);
     return (
         <div className="list-group-item" >
             <div className="row justify-content-center">

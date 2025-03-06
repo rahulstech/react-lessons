@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 
 // create new context object. optionally i can pass initial value as createContext argument
 const TodoContext = createContext();
@@ -23,7 +23,20 @@ export default TodoContext
 // </TheContextProvider>
 export const TodoContextProvider = ({children}) => {
     // a global state to store todos
-    const [todos, setTodos] = useState([]);
+    // in useState i can either pass inital value or a callback function, called state initializer
+    // which returns an initial value.
+    // here instead of using no dependency useEffect hook i am using state initializer
+    // which is more authentic according to the purpose.
+    const [todos, setTodos] = useState(() => {
+        const localTodos = localStorage.getItem('todos');
+        if (localTodos) {
+            const _todos = JSON.parse(localTodos);
+            if (_todos.length > 0) {
+                return _todos;
+            }
+        }
+        return [];
+    });
 
     /** 
      * crud methods to perfrom verious operations on todos.
@@ -32,10 +45,11 @@ export const TodoContextProvider = ({children}) => {
     const getAllTodos = () => todos;
 
     const addTodo = (todo) => {
-        setTodos([
-            ...todos,
+        setTodos((oldTodos) => [
+            ...oldTodos,
             todo
         ]);
+        console.log(`new todo added id=${todo.id}`);
     };
 
     const updateTodoStatus = (todo, newStatus) => {
@@ -58,14 +72,46 @@ export const TodoContextProvider = ({children}) => {
                 return todoItem;
             })
         );
+        console.log(`todo status updated id=${todo.id}`);
     };
 
     const removeTodo = (todo) => {
-        setTodos(
-            todos.filter(v => v.id !== todo.id)
-        )
-    }
+        setTodos((oldTodos) => {
+            return oldTodos.filter(v => v.id !== todo.id);
+        });
+        console.log(`todo removed id=${todo.id}`);
+    };
 
+    // useEffect(callback,[dependency1, dependency2, ...])
+    // whenever one or more dependencies changes the callback method is called
+    // thus this hook is useful when I performing some task which depends on multiple states
+    useEffect(() => {
+        if (todos.length > 0) {
+            const _todos = JSON.stringify(todos);
+            localStorage.setItem('todos', _todos);
+        }
+    }, [todos]);
+
+    // without any dependency callback is called only once
+    // useEffect(() => {
+    //     const localTodos = localStorage.getItem('todos');
+    //     if (localTodos) {
+    //         const _todos = JSON.parse(localTodos);
+    //         if (_todos.length > 0) {
+    //             setTodos(_todos); 
+    //         }
+    //     }
+    // }, []);
+
+    const contxtValue = { getAllTodos, addTodo, updateTodoStatus, removeTodo };
+
+    /**
+     * FIX: components that use useContext get rendered whenever there is a change in todos.
+     *      this is because todos state is used in TodoContext. but components that don't use
+     *      useContext they are not affected for this. 
+     *      for the same reason if i change the todo status of a todo then only that TodoListItem
+     *      should re-render but all the TodoListItems are re-rendered. 
+     */
     return (
         <TodoContext.Provider  
         // whatever passed to value property here will be returned by useContext(TodoContext)
@@ -75,7 +121,7 @@ export const TodoContextProvider = ({children}) => {
         // but here is a problem. i am passing todos, the state object, as property of component, therefore
         // whenever todos is changed all the children of TodoContextProvider is rendered again. but it may not
         // be required to render all the children components each time todos state changes.
-        value={{ getAllTodos, addTodo, updateTodoStatus, removeTodo }}
+        value={contxtValue}
         >
             {children}
         </TodoContext.Provider>

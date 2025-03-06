@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import TodoContext from "../contexts/TodoContext";
 
 function TodoInput({ todosState }) {
     // input title state
     const [title, setTitle] = useState('');
-    const [todos, setTodos] = todosState;
+    const { addTodo } = useContext(TodoContext);
 
     const handleSaveTodo = () => {
         if (!title) {
@@ -15,10 +16,7 @@ function TodoInput({ todosState }) {
             title,
             status: false
         };
-        setTodos([
-            ...todos,
-            todo
-        ]);
+        addTodo(todo);
         // reset the title input field
         setTitle('');
     }

@@ -1,6 +1,22 @@
+import { useContext } from "react";
+import TodoContext from "../contexts/TodoContext";
 
 // properties of a component is passed as an object, not as function arguments
-function TodoListItem({item, onClickRemoveTodo, onChangeTodoStatus }) {
+function TodoListItem({ item }) {
+
+    const {updateTodoStatus, removeTodo} = useContext(TodoContext);
+
+    const handleOnChangeState = (e) => {
+        updateTodoStatus(item, e.target.checked);
+    }
+
+    const handleOnClickTodo = () => {
+        alert(item.title);
+    }
+
+    const handleOnClickDelete = () => {
+        removeTodo(item);
+    }
 
     return (
         <div className="list-group-item" >
@@ -8,14 +24,14 @@ function TodoListItem({item, onClickRemoveTodo, onChangeTodoStatus }) {
                 <div className="col-2">
                     <input type="checkbox" className="form-check-input" checked={item.status} 
                         // using method reference instead of inline fuction is more accepted
-                        onChange={(e)=> { if (onChangeTodoStatus) onChangeTodoStatus(item, e.target.checked) }} />
+                        onChange={handleOnChangeState} />
                 </div>
                 <div className="col-8">
-                    <span onClick={() => alert(item.title)} >{item.title}</span>
+                    <span onClick={handleOnClickTodo} >{item.title}</span>
                 </div>
                 <div className="col-2">
                     <button className="btn btn-danger" 
-                            onClick={()=> { if (onClickRemoveTodo) { onClickRemoveTodo(item)} }}>Delete</button>
+                            onClick={handleOnClickDelete}>Delete</button>
                 </div>
             </div>
         </div>

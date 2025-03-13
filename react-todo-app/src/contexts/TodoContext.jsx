@@ -72,7 +72,7 @@ export const TodoContextProvider = ({children}) => {
                 return todoItem;
             })
         );
-        console.log(`todo status updated id=${todo.id}`);
+        console.log(`todo status updated id=${todo.id} newState=${newStatus}`);
     };
 
     const removeTodo = (todo) => {
@@ -85,7 +85,9 @@ export const TodoContextProvider = ({children}) => {
     // useEffect(callback,[dependency1, dependency2, ...])
     // whenever one or more dependencies changes the callback method is called
     // thus this hook is useful when I performing some task which depends on multiple states
+    // NOTE: useEffect is run after the rendering
     useEffect(() => {
+        console.log('called useEffect with todos dependency');
         if (todos.length > 0) {
             const _todos = JSON.stringify(todos);
             localStorage.setItem('todos', _todos);
@@ -127,9 +129,6 @@ export const TodoContextProvider = ({children}) => {
         </TodoContext.Provider>
     );
 }
-
-
-
 
 
 

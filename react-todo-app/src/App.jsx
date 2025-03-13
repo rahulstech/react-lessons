@@ -2,7 +2,6 @@ import { useContext, useEffect } from "react";
 import TodoInput from "./components/TodoInput"
 import TodoList from "./components/TodoList"
 import TodoContext, { TodoContextProvider } from "./contexts/TodoContext";
-import Header from "./components/Header";
 
 
 function App() {
@@ -19,7 +18,6 @@ function App() {
   console.log('redering App');
   return (
     <TodoContextProvider>
-      <Header />
       <TodoInput />
       <TodoList />
     </TodoContextProvider>

@@ -2,12 +2,15 @@ import { useContext } from "react";
 import TodoContext from "../contexts/TodoContext";
 
 // properties of a component is passed as an object, not as function arguments
-function TodoListItem({ item }) {
+function TodoListItem({ item, onClickRemoveTodo, onChangeTodoStatus }) {
 
-    const {updateTodoStatus, removeTodo} = useContext(TodoContext);
+    // const {updateTodoStatus, removeTodo} = useContext(TodoContext);
 
     const handleOnChangeState = (e) => {
-        updateTodoStatus(item, e.target.checked);
+        // updateTodoStatus(item, e.target.checked);
+        if (onChangeTodoStatus) {
+            onChangeTodoStatus(item, e.target.checked);
+        }
     }
 
     const handleOnClickTodo = () => {
@@ -15,7 +18,10 @@ function TodoListItem({ item }) {
     }
 
     const handleOnClickDelete = () => {
-        removeTodo(item);
+        // removeTodo(item);
+        if (onClickRemoveTodo) {
+            onClickRemoveTodo(item);
+        }
     }
 
     console.log(`rendering TodoItem id=${item.id}`);
